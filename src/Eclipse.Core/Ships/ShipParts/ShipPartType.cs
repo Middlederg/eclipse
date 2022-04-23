@@ -2,6 +2,7 @@
 {
     public enum ShipPartType
     {
+        None,
         Cannon,
         Missile,
         Computer,

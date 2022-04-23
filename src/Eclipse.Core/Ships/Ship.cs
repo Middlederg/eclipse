@@ -1,19 +1,20 @@
 namespace Eclipse.Core
 {
+
     public abstract class Ship
     {
-
         public abstract string Name { get; }
         public abstract string Description { get; }
+        public abstract ShipType Type { get; }
 
         public int Slots { get; }
-        
+
         public int Cost { get; }
 
         public ShipPartCollection ShipParts { get; }
-        public bool IsDestroyed { get; private set; }   
+        public bool IsDestroyed { get; private set; }
 
-        public BaseStats BaseStats { get; set; }  
+        public BaseStats BaseStats { get; set; }
 
         public Ship(BaseStats baseStats, int slots, int cost, params ShipPart[] shipParts)
         {
@@ -23,7 +24,7 @@ namespace Eclipse.Core
             ShipParts = new ShipPartCollection(shipParts);
             IsDestroyed = false;
         }
-        
+
         public IEnumerable<DiceResult> ShootCannons(int defenderShield, IDiceRoller diceRoller) => Shoot(ShipParts.Cannons, defenderShield, diceRoller);
         public IEnumerable<DiceResult> ShootMissils(int defenderShield, IDiceRoller diceRoller) => Shoot(ShipParts.Missils, defenderShield, diceRoller);
 
@@ -44,7 +45,7 @@ namespace Eclipse.Core
             {
                 foreach (var _ in Enumerable.Range(0, dice.Damage))
                 {
-                     if (!ShipParts.HasActiveHulls())
+                    if (!ShipParts.HasActiveHulls())
                     {
                         IsDestroyed = true;
                         return;
@@ -52,7 +53,7 @@ namespace Eclipse.Core
 
                     var hull = ShipParts.GetFirstActive();
                     hull.Damage();
-                }                
+                }
             }
         }
 
@@ -95,17 +96,24 @@ namespace Eclipse.Core
 
         public bool CanBeAdded(ShipPart shipPart)
         {
+            if (shipPart is Drive && this is Starbase)
+            {
+                return false;
+            }
             return shipPart.EnergyConsumption + ShipParts.EnergyConsumption <= Power;
         }
 
         public void Add(ShipPart shipPart, int position)
         {
-            if (position >= Slots)
+            if (CanBeAdded(shipPart))
             {
-                throw new ArgumentOutOfRangeException(nameof(position));
-            }
+                if (position >= Slots)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(position));
+                }
 
-            ShipParts.InsertPart(shipPart, position);
+                ShipParts.InsertPart(shipPart, position);
+            }
         }
     }
 }

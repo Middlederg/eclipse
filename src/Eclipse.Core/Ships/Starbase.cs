@@ -7,5 +7,7 @@ namespace Eclipse.Core
         public override string Name => "Starbase";
 
         public override string Description => "A heavily static armored ship";
+
+        public override ShipType Type => ShipType.Starbase;
     }
 }

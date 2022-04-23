@@ -9,10 +9,11 @@ namespace Eclipse.Core
             this.diceRoller = diceRoller;
         }
 
-        public void MakeAttack(Ship attacker, Ship defender)
+        public IEnumerable<DiceResult> MakeAttack(Ship attacker, Ship defender)
         {
             var diceResults = attacker.ShootCannons(defender.Shields, diceRoller);
             defender.Damage(diceResults);
+            return diceResults;
         }
     }
 }

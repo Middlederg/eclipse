@@ -2,14 +2,19 @@
 {
     public class Battle
     {
-        private readonly IEnumerable<Ship> ships;
+        public IEnumerable<Ship> Ships { get; }
 
-        private readonly IEnumerable<Ship> enemyShips;
+        public IEnumerable<Ship> EnemyShips { get; }
 
         public Battle(IEnumerable<Ship> ships, IEnumerable<Ship> enemyShips)
         {
-            this.ships = ships;
-            this.enemyShips = enemyShips;
+            Ships = ships;
+            EnemyShips = enemyShips;
+        }
+
+        public Ship GetEnemyShip()
+        {
+            return EnemyShips.FirstOrDefault(x => !x.IsDestroyed);
         }
     }
 }

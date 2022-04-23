@@ -7,5 +7,7 @@ namespace Eclipse.Core
         public override string Name => "Cruiser";
 
         public override string Description => "A medium sized ship with a medium crew.";
+
+        public override ShipType Type => ShipType.Cruiser;
     }
 }

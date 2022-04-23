@@ -23,7 +23,7 @@ namespace Eclipse.Core
             int result = diceRoller.Roll();
             if (result <= 1)
             {
-                return DiceResult.Miss();
+                return DiceResult.Miss(this);
             }
             if (result >= 6)
             {
@@ -34,7 +34,7 @@ namespace Eclipse.Core
                 return DiceResult.Hit(this);
             }
 
-            return DiceResult.Miss();
+            return DiceResult.Miss(this);
         }
     }
 

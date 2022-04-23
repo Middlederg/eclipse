@@ -8,12 +8,12 @@ namespace Eclipse.Core
         public int Defense { get; }
         public int Power { get; }
 
-        public BaseStats(int movement, int initiative, int computers, int shields, int power)
+        public BaseStats(int movement, int initiative, int computers, int defense, int power)
         {
             Movement = movement;
             Initiative = initiative;
             Computers = computers;
-            Defense = shields;
+            Defense = defense;
             Power = power;
         }
     }
