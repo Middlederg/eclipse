@@ -1,0 +1,13 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+
+@code {
+    private Battle batle;
+
+    protected override void OnInitialized()
+    {
+        Battle = new Battle(new Interceptor()) 
+    }
+}
