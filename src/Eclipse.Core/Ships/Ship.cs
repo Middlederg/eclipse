@@ -39,7 +39,7 @@ namespace Eclipse.Core
             }
         }
 
-        public void Damage(IEnumerable<DiceResult> diceResults)
+        public void SufferDamage(IEnumerable<DiceResult> diceResults)
         {
             foreach (var dice in diceResults)
             {
@@ -60,6 +60,8 @@ namespace Eclipse.Core
         public int Initiative => ShipParts.Initiative + BaseStats.Initiative;
 
         public int Power => ShipParts.Power + BaseStats.Power;
+
+        public int CurrentStrength => ShipParts.CurrentStrength();
 
         public int Shields
         {

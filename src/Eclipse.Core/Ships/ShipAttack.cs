@@ -9,11 +9,22 @@ namespace Eclipse.Core
             this.diceRoller = diceRoller;
         }
 
-        public IEnumerable<DiceResult> MakeAttack(Ship attacker, Ship defender)
+        public IEnumerable<DiceResult> MakeAttack(BattleGroup attacker, Func<Ship> shipSelector)
         {
-            var diceResults = attacker.ShootCannons(defender.Shields, diceRoller);
-            defender.Damage(diceResults);
-            return diceResults;
+            var target = shipSelector();
+            if (target is not null)
+            {
+                foreach (var attackerShip in attacker.Ships)
+                {
+                    var diceResults = attackerShip.ShootCannons(target.Shields, diceRoller);
+                    target.SufferDamage(diceResults);
+
+                    foreach (var diceResult in diceResults)
+                    {
+                        yield return diceResult;
+                    }
+                }
+            }
         }
     }
 }
