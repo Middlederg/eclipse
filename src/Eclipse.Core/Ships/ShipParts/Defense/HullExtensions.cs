@@ -12,6 +12,11 @@ namespace Eclipse.Core
             return shipParts.Hulls.Sum(x => x.CurrentPoints);
         }
 
+        public static int TotalStrength(this ShipPartCollection shipParts)
+        {
+            return shipParts.Hulls.Sum(x => x.Strength);
+        }
+
         public static Hull GetFirstActive(this ShipPartCollection shipParts)
         {
             return shipParts.Hulls.First(x => !x.IsDestroyed);

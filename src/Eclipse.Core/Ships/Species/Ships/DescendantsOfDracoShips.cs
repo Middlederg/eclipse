@@ -1,31 +1,36 @@
 namespace Eclipse.Core
 {
-    public static class OrionHegemonyShips
+    public static class DescendantsOfDracoShips
     {
+        public const SpecieColor Color = SpecieColor.Yellow;
+
         public static Interceptor Interceptor => new Interceptor(
-            new BaseStats(movement: 0, initiative: 3, computers: 0, defense: 0, power: 1),
+            new BaseStats(movement: 0, initiative: 2, computers: 0, defense: 0, power: 0),
+            Color,
             slots: 4,
             cost: 3,
             EnergySources.NuclearSource,
             Cannons.IonCannon,
             Drives.NuclearDrive,
-            Shields.GaussShield
+            ShipPart.Empty
         );
 
         public static Cruiser Cruiser => new Cruiser(
-            new BaseStats(movement: 0, initiative: 2, computers: 0, defense: 0, power: 2),
+            new BaseStats(movement: 0, initiative: 1, computers: 0, defense: 0, power: 0),
+            Color,
             slots: 6,
             cost: 5,
             Computers.ElectronComputer,
             EnergySources.NuclearSource,
             Cannons.IonCannon,
             Hulls.Hull,
-            Shields.GaussShield,
+            ShipPart.Empty,
             Drives.NuclearDrive
         );
 
         public static Dreadnought Dreadnought => new Dreadnought(
-            new BaseStats(movement: 0, initiative: 1, computers: 0, defense: 0, power: 3),
+            new BaseStats(movement: 0, initiative: 0, computers: 0, defense: 0, power: 0),
+            Color,
             slots: 8,
             cost: 8,
             Computers.ElectronComputer,
@@ -34,18 +39,19 @@ namespace Eclipse.Core
             Hulls.Hull,
             Cannons.IonCannon,
             Hulls.Hull,
-            Shields.GaussShield,
+            ShipPart.Empty,
             Drives.NuclearDrive
         );
 
         public static Starbase StarBase => new Starbase(
-            new BaseStats(movement: 0, initiative: 5, computers: 0, defense: 0, power: 3),
+            new BaseStats(movement: 0, initiative: 4, computers: 0, defense: 0, power: 3),
+            Color,
             slots: 5,
             cost: 3,
             Computers.ElectronComputer,
             Hulls.Hull,
+            ShipPart.Empty,
             Cannons.IonCannon,
-            Shields.GaussShield,
             Hulls.Hull
         );
     }

@@ -18,5 +18,7 @@
         public bool HasActiveShip() => Ships.Any(x => !x.IsDestroyed);
 
         public Ship WeakestShip => Ships.OrderBy(x => x.CurrentStrength).FirstOrDefault();
+
+        public override string ToString() => $"{OwnerType} {Ships.FirstOrDefault()?.ToString() ?? ""}s";
     }
 }

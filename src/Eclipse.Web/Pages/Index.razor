@@ -6,42 +6,43 @@
 <div class="p-10 rounded border-2 m-4">
 
     <div class="grid grid-cols-2">
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4 border-y-2">
             @foreach (var battleGroup in battle.Groups)
             {
-                <div class="grid grid-cols-3">
-                    <div class="flex items-center space-x-2">
-                        @foreach (var ship in battleGroup.Ships)
-                        {
-                            <ShipRenderer Ship="ship" Color="bg-blue-600" />
-                        }
-                    </div>
+                <div class="flex flex-col">
+                    <div class="grid grid-cols-2">
+                        <div class="flex items-center space-x-2">
+                            @foreach (var ship in battleGroup.Ships)
+                            {
+                                <ShipRenderer Ship="ship" />
+                            }
+                        </div>
 
-                    <div class="flex justify-between space-x-2">
+                        <div class="flex justify-between space-x-2">
 
-                        @if (battle.ActiveGroup.Equals(battleGroup))
-                        {
-                            <button type="button" class="@Styles.PrimaryInlineButton" @onclick="async () => await Shoot(battleGroup)">
-                                Shoot
-                            </button>
-                            <button type="button" class="@Styles.SecondaryInlineButton" @onclick="() => Retreat(battleGroup)">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
-                             stroke-width="1.5" stroke="currentColor" fill="none"
-                             stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
-                                </svg>
-                            </button>
-                        }
+                            @if (battle.ActiveGroup.Equals(battleGroup))
+                            {
+                                <button type="button" class="@Styles.PrimaryInlineButton" @onclick="async () => await Shoot(battleGroup)">
+                                    Shoot
+                                </button>
+                                <button type="button" class="@Styles.SecondaryInlineButton" @onclick="() => Retreat(battleGroup)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1" />
+                                    </svg>
+                                </button>
+                            }
+                        </div>
                     </div>
-                    <div class="flex space-x-2">
+                    <div class="flex space-x-2 mt-2">
                         @foreach (var diceResult in results[battleGroup.Index])
                         {
                             <Dice DiceResult="diceResult" />
                         }
                     </div>
                 </div>
-
             }
 
         </div>
@@ -54,7 +55,7 @@
                     <div class="flex items-center space-x-2">
                         @foreach (var ship in enemyGroup.Ships)
                         {
-                            <ShipRenderer Ship="ship" Color="bg-red-600" />
+                            <ShipRenderer Ship="ship" />
                         }
                     </div>
 
@@ -73,18 +74,56 @@
 </div>
 
 
+<div class="p-10 m-4">
+    @if (battle.IsEnded)
+    {
+        <div class="flex justify-between items-center">
+
+            <div>
+                Battle ended!
+            </div>
+
+            <div class="font-bold">
+                Winner: @battle.GetWinner
+            </div>
+        </div>
+    }
+    else
+    {
+        <span>
+            @message
+        </span>
+    }
+</div>
+
+@if (loading)
+{
+    <div class="p-10 m-4">
+        LOADING
+    </div>
+}
+
+
 @code {
     private Battle battle;
 
     private List<List<DiceResult>> results;
     private List<List<DiceResult>> enemyResults;
 
+    private bool loading = false;
+    private string message = "";
+
     protected override void OnInitialized()
     {
         battle = new Battle(
-             new List<Ship>() { TerranShips.Interceptor, TerranShips.Interceptor, TerranShips.Cruiser },
-             new List<Ship>() { PlantaShips.Interceptor, PlantaShips.Dreadnought, PlantaShips.Dreadnought }
+             new List<Ship>() { TerranShips.Interceptor },
+             new List<Ship>() { PlantaShips.Interceptor }
          );
+
+        //battle = new Battle(
+        //    new List<Ship>() { TerranShips.Interceptor, TerranShips.Interceptor, TerranShips.Cruiser },
+        //    new List<Ship>() { PlantaShips.Interceptor, PlantaShips.Dreadnought, PlantaShips.Dreadnought }
+        //);
 
         results = battle.Groups.Select(x => new List<DiceResult>()).ToList();
         enemyResults = battle.EnemyGroups.Select(x => new List<DiceResult>()).ToList();
@@ -95,6 +134,7 @@
         if (battle.IsEnemiesTurn && firstRender)
         {
             await Play();
+            StateHasChanged();
         }
     }
 
@@ -103,12 +143,15 @@
         var attackResults = shipAttack.MakeAttack(group, battle.GetEnemyFirstActiveShip).ToList();
         var selectedGroup = battle.Groups.First(x => x.Index == group.Index);
         results[group.Index] = attackResults.ToList();
+        message = $"You shoots {attackResults.Strikes()}";
 
-        battle.NextTurn();
-
-        if (battle.IsEnemiesTurn)
+        if (!battle.IsEnded)
         {
-            await Play();
+            battle.NextTurn();
+            if (battle.IsEnemiesTurn)
+            {
+                await Play();
+            }
         }
     }
 
@@ -119,6 +162,7 @@
 
     private async Task Play()
     {
+        loading = true;
         while (battle.IsEnemiesTurn)
         {
             var activeGroup = battle.ActiveGroup;
@@ -127,10 +171,12 @@
                 var attackResults = shipAttack.MakeAttack(activeGroup, battle.GetPlayersWeakestShip).ToList();
                 var selectedGroup = battle.EnemyGroups.First(x => x.Index == activeGroup.Index);
                 enemyResults[selectedGroup.Index] = attackResults.ToList();
+                message = $"{activeGroup.ToString()} shoots {attackResults.Strikes()}";
+                battle.NextTurn();
             }
 
-            await Task.Delay(2000);
-            //Sleep
+            await Task.Delay(1000);
         }
+        loading = false;
     }
 }

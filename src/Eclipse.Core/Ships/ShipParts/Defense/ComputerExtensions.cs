@@ -4,7 +4,7 @@ namespace Eclipse.Core
     {
         public static int CurrentAttack(this ShipPartCollection shipParts)
         {
-            return shipParts.Computers.Max(x => x.Attack);
+            return shipParts.Computers.Sum(x => x.Attack);
         }
     }
 }

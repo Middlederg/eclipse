@@ -2,7 +2,7 @@ namespace Eclipse.Core
 {
     public class Dreadnought : Ship
     {
-        public Dreadnought(BaseStats baseStats, int slots = 8, int cost = 10, params ShipPart[] shipParts) : base(baseStats, slots, cost, shipParts) {  }
+        public Dreadnought(BaseStats baseStats, SpecieColor color, int slots = 8, int cost = 10, params ShipPart[] shipParts) : base(baseStats, color, slots, cost, shipParts) {  }
 
         public override string Name => "Dreadnought";
 

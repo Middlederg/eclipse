@@ -15,10 +15,12 @@ namespace Eclipse.Core
         public bool IsDestroyed { get; private set; }
 
         public BaseStats BaseStats { get; set; }
+        public SpecieColor Color { get; }
 
-        public Ship(BaseStats baseStats, int slots, int cost, params ShipPart[] shipParts)
+        public Ship(BaseStats baseStats, SpecieColor color, int slots, int cost, params ShipPart[] shipParts)
         {
             BaseStats = baseStats;
+            Color = color;
             Slots = slots;
             Cost = cost;
             ShipParts = new ShipPartCollection(shipParts);
@@ -41,7 +43,7 @@ namespace Eclipse.Core
 
         public void SufferDamage(IEnumerable<DiceResult> diceResults)
         {
-            foreach (var dice in diceResults)
+            foreach (var dice in diceResults.Succeeded())
             {
                 foreach (var _ in Enumerable.Range(0, dice.Damage))
                 {
@@ -62,6 +64,7 @@ namespace Eclipse.Core
         public int Power => ShipParts.Power + BaseStats.Power;
 
         public int CurrentStrength => ShipParts.CurrentStrength();
+        public int TotalStrength => ShipParts.TotalStrength();
 
         public int Shields
         {
@@ -117,5 +120,7 @@ namespace Eclipse.Core
                 ShipParts.InsertPart(shipPart, position);
             }
         }
+
+        public override string ToString() => Name;
     }
 }

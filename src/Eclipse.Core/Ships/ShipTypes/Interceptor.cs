@@ -2,7 +2,7 @@ namespace Eclipse.Core
 {
     public class Interceptor : Ship
     {
-        public Interceptor(BaseStats baseStats, int slots = 4, int cost = 3, params ShipPart[] shipParts) : base(baseStats, slots, cost, shipParts) { }
+        public Interceptor(BaseStats baseStats, SpecieColor color, int slots = 4, int cost = 3, params ShipPart[] shipParts) : base(baseStats, color, slots, cost, shipParts) { }
 
         public override string Name => "Interceptor";
 
