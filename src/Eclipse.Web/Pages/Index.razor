@@ -3,6 +3,42 @@
 
 <PageTitle>Index</PageTitle>
 
+<OverlayPanel @ref="overlayPanel">
+    <Header>
+        @if (selectedShip is not null)
+        {
+            <div>
+                <span class="font-semibold uppercase tracking-wide">
+                    @selectedShip.Name
+                </span>
+
+                <ShipRenderer Ship="selectedShip">
+
+                </ShipRenderer>
+            </div>
+        }
+    </Header>
+    <Body>
+        @if (selectedShip is not null)
+        {
+            <p>
+                <strong class="text-xs">
+                    Hull:
+                </strong>
+
+                @selectedShip.CurrentStrength / @selectedShip.TotalStrength
+
+            </p>
+            <p class="font-mono">
+                <strong class="text-xs">
+                    Hull:
+                </strong>
+                @selectedShip.CurrentStrength / @selectedShip.TotalStrength
+            </p>
+        }
+    </Body>
+</OverlayPanel>
+
 <div class="p-10 rounded border-2 m-4">
 
     <div class="grid grid-cols-2">
@@ -14,7 +50,7 @@
                         <div class="flex items-center space-x-2">
                             @foreach (var ship in battleGroup.Ships)
                             {
-                                <ShipRenderer Ship="ship" />
+                                <ShipRenderer Ship="ship" OnShipClicked="ShipClicked" />
                             }
                         </div>
 
@@ -55,7 +91,7 @@
                     <div class="flex items-center space-x-2">
                         @foreach (var ship in enemyGroup.Ships)
                         {
-                            <ShipRenderer Ship="ship" />
+                            <ShipRenderer Ship="ship" OnShipClicked="ShipClicked" />
                         }
                     </div>
 
@@ -103,15 +139,56 @@
     </div>
 }
 
+<div class="p-10 grid grid-cols-7">
+
+
+    <ShipRenderer Ship="PlantaShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="DescendantsOfDracoShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="HydranProgressShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="EridaniEmpireShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="MechanemaShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="OrionHegemonyShips.Interceptor"></ShipRenderer>
+    <ShipRenderer Ship="TerranShips.Interceptor"></ShipRenderer>
+
+</div>
+
+<div class="p-10 grid grid-cols-7">
+
+
+    <ShipRenderer Ship="PlantaShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="DescendantsOfDracoShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="HydranProgressShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="EridaniEmpireShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="MechanemaShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="OrionHegemonyShips.Cruiser"></ShipRenderer>
+    <ShipRenderer Ship="TerranShips.Cruiser"></ShipRenderer>
+
+</div>
+
+<div class="p-10 grid grid-cols-7">
+
+
+    <ShipRenderer Ship="PlantaShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="DescendantsOfDracoShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="HydranProgressShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="EridaniEmpireShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="MechanemaShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="OrionHegemonyShips.Dreadnought"></ShipRenderer>
+    <ShipRenderer Ship="TerranShips.Dreadnought"></ShipRenderer>
+
+</div>
 
 @code {
     private Battle battle;
+    private Ship selectedShip;
 
     private List<List<DiceResult>> results;
     private List<List<DiceResult>> enemyResults;
 
     private bool loading = false;
     private string message = "";
+
+    private OverlayPanel overlayPanel;
 
     protected override void OnInitialized()
     {
@@ -131,6 +208,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (battle.IsEnemiesTurn && firstRender)
         {
             await Play();
@@ -158,6 +236,12 @@
     private void Retreat(BattleGroup group)
     {
 
+    }
+
+    private void ShipClicked(Ship ship)
+    {
+        selectedShip = ship;
+        overlayPanel.Show();
     }
 
     private async Task Play()

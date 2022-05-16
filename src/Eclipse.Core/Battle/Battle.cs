@@ -2,15 +2,15 @@
 {
     public class Battle
     {
-        public IEnumerable<BattleGroup> Groups => Ships.Where(x => x.OwnerType == OwnerType.Player);
+        public IEnumerable<BattleGroup> Groups => AllOrderedShips.Where(x => x.OwnerType == OwnerType.Player);
 
-        public IEnumerable<BattleGroup> EnemyGroups => Ships.Where(x => x.OwnerType == OwnerType.Enemy);
+        public IEnumerable<BattleGroup> EnemyGroups => AllOrderedShips.Where(x => x.OwnerType == OwnerType.Enemy);
 
-        public IEnumerable<BattleGroup> Ships { get; }
+        public IEnumerable<BattleGroup> AllOrderedShips { get; }
 
         public int CurrentTurn { get; private set; } = 0;
-        public bool IsEnemiesTurn => Ships.ElementAt(CurrentTurn).OwnerType == OwnerType.Enemy;
-        public BattleGroup ActiveGroup => Ships.ElementAt(CurrentTurn);
+        public bool IsEnemiesTurn => AllOrderedShips.ElementAt(CurrentTurn).OwnerType == OwnerType.Enemy;
+        public BattleGroup ActiveGroup => AllOrderedShips.ElementAt(CurrentTurn);
         public bool IsEnded => Groups.All(x => !x.HasActiveShip()) || EnemyGroups.All(x => !x.HasActiveShip());
         public OwnerType? GetWinner
         {
@@ -36,13 +36,13 @@
                 thereIsActiveShip = ActiveGroup.HasActiveShip();
             }
         }
-        private void SetNextTurn() => CurrentTurn = CurrentTurn + 1 < Ships.Count() ? CurrentTurn + 1 : 0;
+        private void SetNextTurn() => CurrentTurn = CurrentTurn + 1 < AllOrderedShips.Count() ? CurrentTurn + 1 : 0;
 
         public Battle(IEnumerable<Ship> ships, IEnumerable<Ship> enemyShips)
         {
             var groups = ships.GroupBy(x => x.Type).Select((x, index) => BattleGroup.Create(index, x));
             var enemyGroups = enemyShips.GroupBy(x => x.Type).Select((x, index) => BattleGroup.CreateEnemy(index, x));
-            Ships = groups.Concat(enemyGroups)
+            AllOrderedShips = groups.Concat(enemyGroups)
                .OrderBy(x => x.Ships.First().Initiative)
                .ToList();
         }
